@@ -5,7 +5,7 @@ FROM node:20-alpine
 RUN apk add --no-cache poppler-utils bash
 
 # Install n8n globally
-RUN npm install -g n8n
+RUN npm install -g n8n@2.6.3
 
 # Create and set working directory
 WORKDIR /home/node
