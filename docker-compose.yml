@@ -26,7 +26,7 @@ services:
       N8N_GIT_NODE_DISABLE_BARE_REPOS: true
       N8N_SECURE_COOKIE: true
       N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: true
-      N8N_RESTRICT_FILE_ACCESS_TO: /tmp
+      #N8N_RESTRICT_FILE_ACCESS_TO: /tmp
       
       #Re-enable Execute ommand node
       NODES_EXCLUDE: "[]"
