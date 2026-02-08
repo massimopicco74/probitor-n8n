@@ -80,10 +80,6 @@ services:
       # Optional: Control concurrency if your server runs out of RAM
       # N8N_RUNNERS_MAX_CONCURRENCY: 10 
 
-      # Allow pdfminer import in Python Code nodes
-      N8N_RUNNERS_EXTERNAL_ALLOW: pdfminer
-      N8N_RUNNERS_STDLIB_ALLOW: io,struct,re,logging,collections,hashlib,base64
-
     depends_on:
       n8n:
         condition: service_healthy
