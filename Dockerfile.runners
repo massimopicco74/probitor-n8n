@@ -1,0 +1,2 @@
+  FROM n8nio/runners:latest
+  RUN uv pip install --python /opt/runners/task-runner-python/.venv/bin/python pdfminer.six

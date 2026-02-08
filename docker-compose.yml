@@ -1,10 +1,7 @@
 services:
   n8n:
     container_name: n8n
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: custom-n8n:latest
+    image: n8nio/n8n:latest
     restart: always
     networks:
       - n8n_network
@@ -26,10 +23,6 @@ services:
       N8N_GIT_NODE_DISABLE_BARE_REPOS: true
       N8N_SECURE_COOKIE: true
       N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: true
-      #N8N_RESTRICT_FILE_ACCESS_TO: /tmp
-      
-      #Re-enable Execute ommand node
-      NODES_EXCLUDE: "[]"
 
       # DATA PRUNING (Highly Recommended)
       EXECUTIONS_DATA_PRUNE: true
@@ -66,7 +59,9 @@ services:
 
   task-runners:
     container_name: n8n-runners
-    image: n8nio/runners:2.6.3
+    build:
+      context: .
+      dockerfile: Dockerfile.runners    
     restart: always
     networks:
       - n8n_network
@@ -84,6 +79,10 @@ services:
       N8N_RUNNERS_LAUNCHER_LOG_LEVEL: info # Switch back to info
       # Optional: Control concurrency if your server runs out of RAM
       # N8N_RUNNERS_MAX_CONCURRENCY: 10 
+
+      # Allow pdfminer import in Python Code nodes
+      N8N_RUNNERS_EXTERNAL_ALLOW: pdfminer
+      N8N_RUNNERS_STDLIB_ALLOW: io,struct,re,logging,collections,hashlib,base64
 
     depends_on:
       n8n:
