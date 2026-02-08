@@ -76,7 +76,8 @@ services:
       
       # Runner Settings
       N8N_RUNNERS_AUTO_SHUTDOWN_TIMEOUT: 0
-      N8N_RUNNERS_LAUNCHER_LOG_LEVEL: info # Switch back to info
+      N8N_RUNNERS_LAUNCHER_LOG_LEVEL: info
+      N8N_RUNNERS_TASK_TIMEOUT: 300
       # Optional: Control concurrency if your server runs out of RAM
       # N8N_RUNNERS_MAX_CONCURRENCY: 10 
 
