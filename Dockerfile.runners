@@ -5,5 +5,5 @@ FROM alpine:3.22 AS poppler
   USER root
   COPY --from=poppler /usr/bin/pdftotext /usr/local/bin/pdftotext
   COPY --from=poppler /usr/lib/ /usr/lib/
-  ENV NODE_FUNCTION_ALLOW_BUILTIN=child_process,fs,path
+  RUN sed -i 's/"NODE_FUNCTION_ALLOW_BUILTIN": ""/"NODE_FUNCTION_ALLOW_BUILTIN": "child_process,fs,path"/' /etc/n8n-task-runners.json
   USER runner
