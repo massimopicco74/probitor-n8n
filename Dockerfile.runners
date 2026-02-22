@@ -1,9 +1,9 @@
 FROM alpine:3.22 AS poppler
-  RUN apk add --no-cache poppler-utils
-
-  FROM n8nio/runners:latest
-  USER root
-  COPY --from=poppler /usr/bin/pdftotext /usr/local/bin/pdftotext
-  COPY --from=poppler /usr/lib/ /usr/lib/
-  RUN sed -i 's/"NODE_FUNCTION_ALLOW_BUILTIN": "crypto"/"NODE_FUNCTION_ALLOW_BUILTIN": "crypto,child_process,fs,path"/' /etc/n8n-task-runners.json
-  USER runner
+RUN apk add --no-cache poppler-utils
+FROM n8nio/runners:2.7.4
+USER root
+COPY --from=poppler /usr/bin/pdftotext /usr/local/bin/pdftotext
+COPY --from=poppler /usr/bin/pdfinfo /usr/local/bin/pdfinfo
+COPY --from=poppler /usr/lib/ /usr/lib/
+RUN sed -i 's/"NODE_FUNCTION_ALLOW_BUILTIN": "crypto"/"NODE_FUNCTION_ALLOW_BUILTIN": "crypto,child_process,fs,path"/' /etc/n8n-task-runners.json
+USER runner
