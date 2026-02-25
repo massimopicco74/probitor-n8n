@@ -1,106 +1,104 @@
 services:
-      container_name: n8n
-      image: n8nio/n8n:2.7.4
-      restart: always
-      networks:
-        - n8n_network
-        # - dokploy_network
-      environment:
-        NODE_ENV: production
-        GENERIC_TIMEZONE: ${GENERIC_TIMEZONE:-Europe/Rome}
-        TZ: ${GENERIC_TIMEZONE:-Europe/Rome}
+  n8n:
+    container_name: n8n
+    image: n8nio/n8n:2.7.4
+    restart: always
+    networks:
+      - n8n_network
+      # - dokploy_network
+    environment:
+      NODE_ENV: production
+      GENERIC_TIMEZONE: ${GENERIC_TIMEZONE:-Europe/Rome}
+      TZ: ${GENERIC_TIMEZONE:-Europe/Rome}
 
-        # N8N Basic
-        N8N_LOG_LEVEL: info
-        N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY}
-        N8N_PROTOCOL: http
-        N8N_HOST: ${N8N_HOST:-localhost}
-        N8N_PORT: ${N8N_PORT:-5678}
-        WEBHOOK_URL: https://n8n.mtgroupsrls.com
-        N8N_PROXY_HOPS: 1
-        N8N_BLOCK_ENV_ACCESS_IN_NODE: false
-        N8N_GIT_NODE_DISABLE_BARE_REPOS: true
-        N8N_SECURE_COOKIE: true
-        N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: true
+      # N8N Basic
+      N8N_LOG_LEVEL: info
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY}
+      N8N_PROTOCOL: http
+      N8N_HOST: ${N8N_HOST:-localhost}
+      N8N_PORT: ${N8N_PORT:-5678}
+      WEBHOOK_URL: https://n8n.mtgroupsrls.com
+      N8N_PROXY_HOPS: 1
+      N8N_BLOCK_ENV_ACCESS_IN_NODE: false
+      N8N_GIT_NODE_DISABLE_BARE_REPOS: true
+      N8N_SECURE_COOKIE: true
+      N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: true
 
-        # Data pruning
-        EXECUTIONS_DATA_PRUNE: true
-        EXECUTIONS_DATA_MAX_AGE: 336
+      # Data pruning
+      EXECUTIONS_DATA_PRUNE: true
+      EXECUTIONS_DATA_MAX_AGE: 336
 
-        # Payload
-        N8N_PAYLOAD_SIZE_MAX: 100
+      # Payload
+      N8N_PAYLOAD_SIZE_MAX: 100
 
-        # Binary data (no in-memory blobs)
-        N8N_DEFAULT_BINARY_DATA_MODE: filesystem
-        N8N_BINARY_DATA_STORAGE_PATH: /home/node/.n8n/binaryData
+      # Binary data (no in-memory blobs)
+      N8N_DEFAULT_BINARY_DATA_MODE: filesystem
+      N8N_BINARY_DATA_STORAGE_PATH: /home/node/.n8n/binaryData
 
-        # Runners (external mode)
-        N8N_RUNNERS_ENABLED: true
-        N8N_RUNNERS_MODE: external
-        N8N_RUNNERS_BROKER_LISTEN_ADDRESS: 0.0.0.0
-        N8N_RUNNERS_BROKER_PORT: 5679
-        N8N_NATIVE_PYTHON_RUNNER: true
-        N8N_RUNNERS_AUTH_TOKEN: ${N8N_RUNNERS_AUTH_TOKEN}
+      # Runners (external mode)
+      N8N_RUNNERS_ENABLED: true
+      N8N_RUNNERS_MODE: external
+      N8N_RUNNERS_BROKER_LISTEN_ADDRESS: 0.0.0.0
+      N8N_RUNNERS_BROKER_PORT: 5679
+      N8N_NATIVE_PYTHON_RUNNER: true
+      N8N_RUNNERS_AUTH_TOKEN: ${N8N_RUNNERS_AUTH_TOKEN}
 
-        # Runner robustness
-        N8N_RUNNERS_TASK_TIMEOUT: 1200
-        N8N_RUNNERS_TASK_REQUEST_TIMEOUT: 120
-        N8N_RUNNERS_MAX_PAYLOAD: 1073741824
-        N8N_RUNNERS_MAX_OLD_SPACE_SIZE: 2048
+      # Runner robustness
+      N8N_RUNNERS_TASK_TIMEOUT: 1200
+      N8N_RUNNERS_TASK_REQUEST_TIMEOUT: 120
+      N8N_RUNNERS_MAX_PAYLOAD: 1073741824
+      N8N_RUNNERS_MAX_OLD_SPACE_SIZE: 2048
 
-        # Database
-        DB_TYPE: postgresdb
-        DB_POSTGRESDB_HOST: ${DB_HOST}
-        DB_POSTGRESDB_PORT: ${DB_PORT}
-        DB_POSTGRESDB_USER: ${DB_USER}
-        DB_POSTGRESDB_PASSWORD: ${DB_PASSWORD}
-        DB_POSTGRESDB_DATABASE: ${DB_NAME}
+      # Database
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: ${DB_HOST}
+      DB_POSTGRESDB_PORT: ${DB_PORT}
+      DB_POSTGRESDB_USER: ${DB_USER}
+      DB_POSTGRESDB_PASSWORD: ${DB_PASSWORD}
+      DB_POSTGRESDB_DATABASE: ${DB_NAME}
 
-      volumes:
-        - n8n_data:/home/node/.n8n
+    volumes:
+      - n8n_data:/home/node/.n8n
 
-      healthcheck:
-        test: ["CMD-SHELL", "wget --spider http://localhost:5678/healthz || exit 1"]
-        interval: 5s
-        timeout: 5s
-        retries: 10
-        start_period: 5s
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider http://localhost:5678/healthz || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
 
-    task-runners:
-      container_name: n8n-runners
-      build:
-        context: .
-        dockerfile: Dockerfile.runners
-      restart: always
-      networks:
-        - n8n_network
-      environment:
-        GENERIC_TIMEZONE: ${GENERIC_TIMEZONE:-Europe/Rome}
-        TZ: ${GENERIC_TIMEZONE:-Europe/Rome}
+  task-runners:
+    container_name: n8n-runners
+    build:
+      context: .
+      dockerfile: Dockerfile.runners
+    restart: always
+    networks:
+      - n8n_network
+    environment:
 
-        # Connection
-        N8N_RUNNERS_TASK_BROKER_URI: http://n8n:5679
-        N8N_RUNNERS_AUTH_TOKEN: ${N8N_RUNNERS_AUTH_TOKEN}
+      # Connection
+      N8N_RUNNERS_TASK_BROKER_URI: http://n8n:5679
+      N8N_RUNNERS_AUTH_TOKEN: ${N8N_RUNNERS_AUTH_TOKEN}
 
-        # Runner settings
-        N8N_RUNNERS_AUTO_SHUTDOWN_TIMEOUT: 0
-        N8N_RUNNERS_LAUNCHER_LOG_LEVEL: info
-        N8N_RUNNERS_TASK_TIMEOUT: 1200
-        N8N_RUNNERS_MAX_PAYLOAD: 1073741824
-        N8N_RUNNERS_MAX_OLD_SPACE_SIZE: 2048
-        N8N_RUNNERS_MAX_CONCURRENCY: 2
+      # Runner settings
+      N8N_RUNNERS_AUTO_SHUTDOWN_TIMEOUT: 0
+      N8N_RUNNERS_LAUNCHER_LOG_LEVEL: info
+      N8N_RUNNERS_TASK_TIMEOUT: 1200
+      N8N_RUNNERS_MAX_PAYLOAD: 1073741824
+      N8N_RUNNERS_MAX_OLD_SPACE_SIZE: 2048
+      N8N_RUNNERS_MAX_CONCURRENCY: 2
 
-      depends_on:
-        n8n:
-          condition: service_healthy
+    depends_on:
+      n8n:
+        condition: service_healthy
 
-  networks:
-    n8n_network:
-      driver: bridge
-    # dokploy_network:
-    #   external: true
+networks:
+  n8n_network:
+    driver: bridge
+  # dokploy_network:
+  #   external: true
 
-  volumes:
-    n8n_data:
-      external: true
-      
+volumes:
+  n8n_data:
+    external: true
